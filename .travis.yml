@@ -1,0 +1,20 @@
+sudo: required
+services:
+- docker
+before_install:
+- pip install awscli --upgrade --user
+- eval $(aws ecr get-login --region us-east-1 --no-include-email)
+- curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+- chmod +x ./kubectl
+- mv ./kubectl $HOME/kubectl
+- openssl aes-256-cbc -K $encrypted_a6098762118b_key -iv $encrypted_a6098762118b_iv -in kube.config.enc -out kube.config -d
+- mkdir -p $HOME/.kube/ && mv kube.config $HOME/.kube/config
+script:
+- docker build -t 234514569215.dkr.ecr.us-east-1.amazonaws.com/njcoast:mock-$TRAVIS_COMMIT .
+- docker push 234514569215.dkr.ecr.us-east-1.amazonaws.com/njcoast:mock-$TRAVIS_COMMIT
+after_success:
+- "$HOME/kubectl set image deployment/mock mock=234514569215.dkr.ecr.us-east-1.amazonaws.com/njcoast:mock-$TRAVIS_COMMIT"
+env:
+  global:
+  - secure: BZS4Nl1tX7uquG0H8Um3ZKW/xxF+PWBr2wMBHflKJ4dDkgElqo8S8x344QG9yvqUs/WIkoDdUIrWcB8vQHCi2mmwrL4TcGUJVk91imHqsCCCxUvizbVm0DonuObMAsW9gU0v/k33czRKVs/XxFkKRBL/kCNDOmuunKTkBzgDxMT4gTDO9qXwavjciIqM/aQERCc6nQAl52Vij7VoKEx06uJPPJazBVyqYdmG7benpdihgV2QAe++mtVdxaB8xBj0ZRcfuqrW/nQY/O0YUPTPyDofm18UTAUke+FqqB8fW6sWdOvl6pgh77WpmRuO1SWLKZ1LFUWJt6S8NF6GkZxkPbTbgx+SVP38UokHYNr4VYuAus++NoxdebTAfEwjKOyrbazEHapaozlvfFawpPINj9N/Tlingp3IFip7v6S+5Q5IQuaM/NK1/ONwUXK1M3vh1OwIWGDc8EjjlLux82r+3NDNqEA0MezH9LVZpQERkRc2gay6CRodx7Uy0/z/v+SFFpUI5zzvDk3YyuXQfMbolcjoDR7Es+g3w+cADNO0Qw/WIqdUcVcCbZ0INgn2mJifzi1w5HUU10it/M8+EAguP7t00ohio4Xa0r+Iuqdr6RHrlTlbAIMWATt3eRp1C6yr7NyAoC2YfYiNNwoSgJDqHfttuwJ6Ox4yd54jDES9sXE=
+  - secure: Lnfup1iivYIK+KbX23LT2I3XyYGZOWZhA4LcQpDeVAzlSGA+qGXURJUOyLgOEzfhzzW7ot1ysGyU1Keh0R30YCkEu/v+P7aQahmmZUlVdgJzcKheNdUUpzd0U5zCUZoQyaeyF0aJTvuspaRN14VBYdsoqCQuumY7B3r662Kg6jXuWoohLqZ0ZGQ0wUXIsQpJfblZ/5e0D6w+iQVmnDNNNObJsstFJTqcxhSBNhfq6qEqqnVx9ZxaJIkL9yHvX4ByHN2FrmUxv3xu5kGsRcBjmWEXSZ23br54BqaPJc7G85uK5BHSDEowS+dhroHxYTHq3xxpoPZ/33BhkVu4lVTu/LQoSjFS6QybCB3v7a0Nth4NBIjzeCbrsjRbtbAgAQ8aw1OpUyt+aVKur65ZtZEfRDCLME7F5Wf+j1HXOEX7IIlKQ28BDnFhT3sFvVnclZ12RSYx8wnmOGQAcvofphmJE3DjifKwoczn3njeb4OFRJWtTEqg00TGXSTqdPpZnkGaWZfVkDAMo8f28jtjtszWGKUAPAc9AgE/KRF0SBVlfl3OUI2tT2dyxOTK+1KEXycBxSdudnQ+QzmMztUgQJsK8QSH+KcYW4ZHkYWI975Aw0rKoWn4rBy/H2lELZ5ibgNEemOu8AWkv1IF/LE9t5BtaWYJcW/CW9xRg+pEg+Swjnw=
