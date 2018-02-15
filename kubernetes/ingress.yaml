@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: mock
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80,"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:us-east-1:234514569215:certificate/70c369c1-2022-4ede-a9e9-1e827ec1fbe0"
+spec:
+  rules:
+  - host: njcoast.us
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: mock
+          servicePort: 8081
+  - host: www.njcoast.us
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: mock
+          servicePort: 8081

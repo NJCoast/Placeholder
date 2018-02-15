@@ -1,0 +1,18 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: mock
+spec:
+  selector:
+    matchLabels:
+      app: mock
+  template:
+    metadata:
+      labels:
+        app: mock
+    spec:
+      containers:
+      - name: mock
+        image: 234514569215.dkr.ecr.us-east-1.amazonaws.com/njcoast:mock
+        ports:
+        - containerPort: 8081
