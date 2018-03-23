@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: mock
   annotations:
+    ingress.kubernetes.io/force-ssl-redirect: "true"
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80,"HTTPS": 443}]'
